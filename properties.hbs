@@ -1,0 +1,91 @@
+{{#properties-form
+  model=model
+  save=(action 'save')
+  cancel=(action 'cancel')
+  disableSave=(not isValidColor)}}
+  <div class="parent-settings">
+    <p>Override Parent/Default Settings {{x-check disabled=model.isSelectionRoot action=(action 'toggleParent') checked=isParentSettings}}</p>
+    <div class="row">
+      <div class="col-xs-12 col-sm-6">
+        <div class="form-group">
+          <label>Company Name</label>
+          {{input type="text" class="form-control" placeholder="Company Name" disabled=(not isParentSettings) value=model.organizationSetup.companyName}}
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <div class="form-group">
+          <label>Product</label>
+          {{#if isParentSettings}}
+            {{x-select
+              model=productNames
+              value=model.organizationSetup.userGroupName
+              placeholder='Select a Product'
+              labelKey='name' valueKey='name'
+              onSelect=(action (mut model.organizationSetup.userGroupName))}}
+          {{else}}
+            <input type="text" class="form-control" disabled=true value={{model.organizationSetup.userGroupName}}>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-sm-3">
+        <div class="form-group">
+          <label>Primary Color</label>
+          {{masked-input type="text" class="form-control" disabled=(not isParentSettings) mask='******' value=model.organizationSetup.color}}
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-3">
+        <i style="{{{concat 'color:#' model.organizationSetup.color}}}" class="fa fa-square fa-5x"></i>
+        <p class="{{if isValidColor 'isValidHex' 'isInvalidHex'}}">Invalid Hex Code</p>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <label>Company Logo</label>
+        <img src="data:image/png;base64,{{model.organizationSetup.logoBase64}}" alt="Logo" class="org-logo img-responsive" height="150">
+        {{#if isParentSettings}}
+          <span class='btn btn-default btn-file'>
+          Change Picture
+          {{x-file-upload
+            multiple=false capture='capture'
+            ext=imageExt
+            accept='image/png'
+            selected=(action 'newLogo')}}
+          </span>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="parent-settings">
+    <p>Override Inactivity Settings {{x-check disabled=model.isSelectionRoot action=(action 'toggleInactivity') checked=isInactivitySettings}}</p>
+    <div class="row">
+      <div class="col-xs-12 col-sm-6">
+        <div class="form-group">
+          <label>Inactive Applicant Activity Period (Days)</label>
+          {{input type="text" class="form-control" placeholder="Days Inactive" disabled=(not isInactivitySettings) value=model.inactiveApplicantSetup.daysApplicantInactive}}
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <div class="form-group">
+          <label>Inactive User Activity Period (Days)</label>
+          {{input type="text" class="form-control" placeholder="Days Inactive" disabled=(not isInactivitySettings) value=model.inactiveApplicantSetup.daysUserInactive}}
+        </div>
+      </div>
+    </div>
+  </div>
+{{/properties-form}}
+
+{{#if showParentDeleteModal}}
+  {{#x-modal title='Deleting Parent Settings'
+    aLabel='Yes' aClass='btn-primary' aAction=(action 'parentDeleteWarning' true)
+    bLabel='No' bAction=(action 'parentDeleteWarning' false)}}
+    By unchecking this box you will be deleting these settings for this organization, and any organizations that inherit these settings will default to the next highest organization. Are you sure you wish to continue?
+  {{/x-modal}}
+{{/if}}
+{{#if showInactivityDeleteModal}}
+  {{#x-modal title='Deleting Inactivity Settings'
+    aLabel='Yes' aClass='btn-primary' aAction=(action 'inactivityDeleteWarning' true)
+    bLabel='No' bAction=(action 'inactivityDeleteWarning' false)}}
+    By unchecking this box you will be deleting these settings for this organization, and any organizations that inherit these settings will default to the next highest organization. Are you sure you wish to continue?
+  {{/x-modal}}
+{{/if}}

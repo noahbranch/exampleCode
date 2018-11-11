@@ -5,7 +5,7 @@ import { inject as service } from '@ember/service';
 import { isBlank, isPresent } from '@ember/utils';
 import { or } from '@ember/object/computed';
 
-const GOOGLE_KEY = 'AIzaSyCjBOhlC7914uPrWPffPIHZO8mTzcgtkow';
+const GOOGLE_KEY = '';
 
 export default Component.extend({
   user: service(),
